@@ -6,6 +6,7 @@ import com.example.schoollibrary.repository.UsersbooksRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,35 +42,42 @@ public class LibraryServiceImpl implements LibraryService {
         userInfo.setCreatedAt(usersbooks.getUser().getCreatedAt());
 
 
-        //Integer booksWasRead = Stream.of(usersbooks).forEach(u -> u.getDatePut() == null);
-        //Stream<Usersbooks> booksWasRead = Stream.of(usersbooks);
-
         Long countBookWasRead = Stream.of(usersbooks).filter(c -> c.getDatePut() != null).count();
         Long countBookInProgress = Stream.of(usersbooks).filter(c -> c.getDatePut() == null).count();
-        //Date maxDateGettingBook = Stream.of(usersbooks).filter(c -> c.getDateTake() != null).max(LocalDate::compareTo).get(); //orElse(null);
-
         Date maxDateGettingBook = Stream.of(usersbooks).filter(c -> c.getDateTake() != null)
                 .map(Usersbooks::getDateTake)
                 .max(Comparator.naturalOrder()).get();
 
 
-        // int countBookWasRead = 0;
-        // int countBookInProgress = 0;
-//        for (Usersbooks ub : usersbooks) {
-//            if(ub != null) {
-//                countBookWasRead++;
-//            }
-//            if(ub.getDatePut() == null) {
-//                countBookInProgress++;
-//            }
-//        }
+        int countBookWasRead_1 = 0;
+        int countBookInProgress_1 = 0;
+        //Date maxDate = new Date(1990, 01, 01);
+        Date maxDate = new Date();
 
-        userInfo.setBookRead(countBookWasRead.intValue());          // stream(datePut -> datePut == null).count();
-        userInfo.setBookInProgress(countBookInProgress.intValue());    // // stream(datePut -> datePut != null).count();
-        userInfo.setLastDateTakedBookFromLibrary(maxDateGettingBook);
-//
-        //Stream<String> list = new ArrayList<>()
-        //userInfo.setBookListInfo();     // stream == последняя дата взятия DICTINCT()- возвращаем все как LIST<BookDTO>
+        for (Usersbooks ub : usersbooks.getUser().getUsersbooks()) {
+            if(ub.getDateTake() != null) {
+                countBookWasRead_1++;
+            }
+            if(ub.getDateTake() != null && ub.getDatePut() == null) {
+                countBookInProgress_1++;
+            }
+            if(ub.getDateTake().getTime() > maxDate.getTime()) {
+
+                //maxDate = ub.getDateTake();
+                //maxDate = new Date(ub.getDateTake().getTime());
+                // maxDate = new Date(ub.getDateTake().getYear(), ub.getDateTake().getMonth(), ub.getDateTake().getDay());
+                maxDate = new Date();
+                maxDate.setTime(ub.getDateTake().getTime());
+            }
+        }
+        userInfo.setBookRead(countBookWasRead_1);          // stream(datePut -> datePut == null).count();
+        userInfo.setBookInProgress(countBookInProgress_1);    // // stream(datePut -> datePut != null).count();
+        userInfo.setLastDateTakedBookFromLibrary(maxDate);
+
+        //userInfo.setBookRead(countBookWasRead.intValue());          // stream(datePut -> datePut == null).count();
+        //userInfo.setBookInProgress(countBookInProgress.intValue());    // // stream(datePut -> datePut != null).count();
+        //userInfo.setLastDateTakedBookFromLibrary(maxDateGettingBook);
+
 
         return userInfo;
     }
