@@ -1,9 +1,13 @@
 package com.example.schoollibrary.service;
 
+import com.example.schoollibrary.modelDTO.BookDTO;
+import com.example.schoollibrary.modelDTO.MostPopularBooksDTO;
 import com.example.schoollibrary.modelDTO.UserInfoDTO;
+import com.example.schoollibrary.modelEntity.Book;
 import com.example.schoollibrary.modelEntity.Usersbooks;
 import com.example.schoollibrary.repository.UsersbooksRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.mbeans.UserMBean;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -82,5 +86,33 @@ public class LibraryServiceImpl implements LibraryService {
         return userInfo;
     }
 
+    @Override
+    public List<MostPopularBooksDTO> findMostPopularBooks() {
+        log.info("IN LibraryServiceImpl  method findMostPopularBooks}");
+
+        Usersbooks books = usersbooksRepository.findMostPopularBooks();
+
+        List<MostPopularBooksDTO> listOfPopularBooks = new ArrayList<>();
+
+        for(Usersbooks b : books.getBook().getUsersbooks()) {
+            listOfPopularBooks.add(new MostPopularBooksDTO(
+                                    b.getBook().getId(),
+                                    b.getBook().getBookName(),
+                                    b.getBook().getAuthor(),
+                                    b.getBook().getPubHouse(),
+                                    b.getBook().getYear(),
+                                    b.getBook().getCreatedAt(),
+                                    b.getBook().getFlag(),
+                                    b.getDateTake(),
+                                    b.getDatePut()
+            ));
+        }
+
+        listOfPopularBooks = listOfPopularBooks.stream().sorted(Comparator.comparing(MostPopularBooksDTO::getDateTake)).toList();
+
+        //listOfPopularBooks = Stream.of(books).sorted(Comparator.comparing()).collect(Collectors.toList());
+
+        return listOfPopularBooks;
+    }
 
 }

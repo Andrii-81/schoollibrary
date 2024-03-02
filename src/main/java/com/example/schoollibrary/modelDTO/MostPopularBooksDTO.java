@@ -1,15 +1,18 @@
 package com.example.schoollibrary.modelDTO;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Data
 @Getter
 @Setter
-//@AllArgsConstructor
 @NoArgsConstructor
-public class BookDTO {
+
+public class MostPopularBooksDTO {
     private Integer id;
     private String bookName;
     private String author;
@@ -18,10 +21,11 @@ public class BookDTO {
     private Date createdAt;
     private String flag;
 
-//    BookDTO() {
-//    }
+    private Date dateTake;
+    private Date datePut;
 
-    public BookDTO(Integer id, String bookName, String author, String pubHouse, Date year, Date createdAt, String flag) {
+    public MostPopularBooksDTO(Integer id, String bookName, String author, String pubHouse, Date year,
+                               Date createdAt, String flag, Date dateTake, Date datePut) {
         this.id = id;
         this.bookName = bookName;
         this.author = author;
@@ -29,6 +33,7 @@ public class BookDTO {
         this.year = year;
         this.createdAt = createdAt;
         this.flag = flag;
-
+        this.dateTake = dateTake;
+        this.datePut = datePut;
     }
 }
